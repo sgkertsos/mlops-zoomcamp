@@ -1,0 +1,7 @@
+Activate environment
+********************
+conda activate exp-tracking-env
+
+Run mlflow
+**********
+mlflow ui --backend-store-uri sqlite:///mlflow.db
