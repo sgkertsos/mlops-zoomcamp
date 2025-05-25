@@ -5,3 +5,5 @@ conda activate exp-tracking-env
 Run mlflow
 **********
 mlflow ui --backend-store-uri sqlite:///mlflow.db
+
+mlflow server --backend-store-uri sqlite:///backend.db --default-artifact-root ./artifacts_local
