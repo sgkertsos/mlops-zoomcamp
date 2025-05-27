@@ -1,3 +1,7 @@
+Create environment
+******************
+conda create -n orchestration-env python-3.9
+
 Activate environment
 ********************
 conda activate exp-tracking-env
