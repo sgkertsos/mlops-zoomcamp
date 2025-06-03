@@ -4,7 +4,8 @@ from sklearn.metrics import root_mean_squared_error
 import mlflow
 import pickle
 
-mlflow.set_tracking_uri("http://172.17.0.1:5000")
+#mlflow.set_tracking_uri("http://172.17.0.1:5000")
+mlflow.set_tracking_uri("file:./mlruns")
 mlflow.set_experiment("nyc-taxi-experiment")
 
 if 'transformer' not in globals():
@@ -30,27 +31,17 @@ def transform(data, *args, **kwargs):
     """
     # Specify your transformation logic here
 
-    categorical = ['PULocationID', 'DOLocationID']
-
-    train_dicts = data[categorical].to_dict(orient='records')
-
-    dv = DictVectorizer()
-    X_train = dv.fit_transform(train_dicts)
-    
-    target = 'duration'
-    y_train = data[target].values
-
     with mlflow.start_run():
-        lr = LinearRegression()
-        lr.fit(X_train, y_train)
+        #lr = LinearRegression()
+        with open ("/home/src/ml_project/models/lin_reg.bin", "rb") as f:
+            lr = pickle.load(f)
 
-        y_pred = lr.predict(X_train)
+        # lr.fit(X_train, y_train)
 
-        with open ("models/lin_reg.bin", "wb") as f_out:
-            pickle.dump(dv, f_out)
+        # y_pred = lr.predict(X_train)
 
-        mlflow.log_artifact(local_path='models/lin_reg.bin', artifact_path='artifacts_local')
-
+        mlflow.sklearn.log_model(lr, artifact_path="artifacts_local")
+        #mlflow.log_artifact(local_path='models/lin_reg.bin', artifact_path='artifacts_local')
     #print(lr.intercept_)
 
     return data
