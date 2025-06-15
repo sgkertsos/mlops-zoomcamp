@@ -1,9 +1,15 @@
+import os
 import pickle
+
+import mlflow
 
 from flask import Flask, request, jsonify
 
-with open('lin_reg.bin', 'rb') as f_in:
-    (dv, model) = pickle.load(f_in)
+
+# RUN_ID = os.getenv('RUN_ID')
+RUN_ID = 'b4d3bca8aa8e46a6b8257fe4541b1136'
+logged_model = f's3://mlflow-models-alexey/1/{RUN_ID}/artifacts/model'
+model = mlflow.pyfunc.load_model(logged_model)
 
 def prepare_features(ride):
     features = {}
@@ -12,9 +18,8 @@ def prepare_features(ride):
     return features
 
 def predict(features):
-    X = dv.transform(features)
-    preds = model.predict(X)
-    return preds[0]
+    preds = model.predict(features)
+    return float(preds[0])
 
 app = Flask('duration-prediction')
 
