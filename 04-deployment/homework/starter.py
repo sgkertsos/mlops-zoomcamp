@@ -18,10 +18,21 @@ def read_data(filename):
     
     return df
 
-df = read_data('https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2023-03.parquet')
-
-dicts = df[categorical].to_dict(orient='records')
-X_val = dv.transform(dicts)
-y_pred = model.predict(X_val)
 
 
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Train a model to predict trip duration.')
+    parser.add_argument('--year', type=int, required=True, help='Year of the data.')
+    parser.add_argument('--month', type=int, required=True, help='Month of the data.')
+    args = parser.parse_args()
+
+    df = read_data(f'https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{args.year:04d}-{args.month:02d}.parquet')
+
+    dicts = df[categorical].to_dict(orient='records')
+    X_val = dv.transform(dicts)
+    y_pred = model.predict(X_val)
+
+    print(y_pred.mean())
